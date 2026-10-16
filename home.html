@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Healthcare Provider Lookup</title>
+</head>
+<body>
+    <h1>Healthcare Provider Lookup</h1>
+
+    <form method="get">
+        <label>State:</label>
+        <input type="text" name="state"
+               value="{{ state }}" placeholder="NY">
+
+        <label>City:</label>
+        <input type="text" name="city"
+               value="{{ city }}" placeholder="New York">
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    {% if result_count != None %}
+        <h2>Number of results: {{ result_count }}</h2>
+
+        {% for provider in providers %}
+            <hr>
+            <p><strong>Provider Name:</strong> {{ provider.name }}</p>
+            <p><strong>NPI Number:</strong> {{ provider.npi }}</p>
+            <p><strong>Specialty:</strong> {{ provider.specialty }}</p>
+            <p><strong>Address:</strong> {{ provider.address }}</p>
+            <p><strong>City:</strong> {{ provider.city }}</p>
+            <p><strong>State:</strong> {{ provider.state }}</p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
