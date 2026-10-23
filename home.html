@@ -1,41 +1,464 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Healthcare Provider Lookup</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 24px;
+            background: #f8fafc;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .search-panel {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 15px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 180px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 9px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .clear-link {
+            margin-left: 14px;
+            color: #2563eb;
+        }
+
+        .provider-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        .provider-card h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+
+        .provider-card p {
+            margin: 8px 0;
+        }
+
+        .provider-details {
+            margin-top: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        details {
+            margin-top: 18px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 15px;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+
+        .info-table th,
+        .info-table td {
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .info-table th {
+            width: 220px;
+            background: #eff6ff;
+            font-weight: 600;
+        }
+
+        .info-table td {
+            background: white;
+        }
+
+        .data-section {
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+        }
+
+        .data-section h4 {
+            margin: 0 0 10px;
+            color: #374151;
+        }
+
+        .error {
+            color: #b91c1c;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            color: #6b7280;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 12px;
+            }
+
+            .field {
+                width: 100%;
+            }
+
+            .info-table th {
+                width: 35%;
+            }
+
+            .info-table th,
+            .info-table td {
+                padding: 7px;
+                font-size: 12px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
     <h1>Healthcare Provider Lookup</h1>
 
-    <form method="get">
-        <label>State:</label>
-        <input type="text" name="state"
-               value="{{ state }}" placeholder="NY">
+    <div class="search-panel">
 
-        <label>City:</label>
-        <input type="text" name="city"
-               value="{{ city }}" placeholder="New York">
+        <form method="get">
 
-        <button type="submit">Search</button>
-    </form>
+            <div class="search-row">
+
+                <div class="field">
+                    <label for="state">State</label>
+                    <input
+                        id="state"
+                        type="text"
+                        name="state"
+                        value="{{ state }}"
+                        placeholder="NY"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="city">City</label>
+                    <input
+                        id="city"
+                        type="text"
+                        name="city"
+                        value="{{ city }}"
+                        placeholder="New York"
+                    >
+                </div>
+
+            </div>
+
+            <div class="search-row">
+
+                <div class="field">
+                    <label for="first_name">First Name</label>
+                    <input
+                        id="first_name"
+                        type="text"
+                        name="first_name"
+                        value="{{ first_name }}"
+                        placeholder="John"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="last_name">Last Name</label>
+                    <input
+                        id="last_name"
+                        type="text"
+                        name="last_name"
+                        value="{{ last_name }}"
+                        placeholder="Smith"
+                    >
+                </div>
+
+            </div>
+
+            <div class="search-row">
+
+                <div class="field">
+                    <label for="specialty">Specialty</label>
+                    <input
+                        id="specialty"
+                        type="text"
+                        name="specialty"
+                        value="{{ specialty }}"
+                        placeholder="Cardiology"
+                    >
+                </div>
+
+            </div>
+
+            <button type="submit">Search</button>
+
+            <a href="/" class="clear-link">Clear</a>
+
+        </form>
+
+    </div>
 
     {% if error %}
-        <p>{{ error }}</p>
+        <p class="error">{{ error }}</p>
     {% endif %}
 
-    {% if result_count != None %}
+    {% if searched and not error %}
+
         <h2>Number of results: {{ result_count }}</h2>
 
         {% for provider in providers %}
-            <hr>
-            <p><strong>Provider Name:</strong> {{ provider.name }}</p>
-            <p><strong>NPI Number:</strong> {{ provider.npi }}</p>
-            <p><strong>Specialty:</strong> {{ provider.specialty }}</p>
-            <p><strong>Address:</strong> {{ provider.address }}</p>
-            <p><strong>City:</strong> {{ provider.city }}</p>
-            <p><strong>State:</strong> {{ provider.state }}</p>
+
+            <div class="provider-card">
+
+                <h3>{{ provider.name }}</h3>
+
+                <p>
+                    <strong>Provider Name:</strong>
+                    {{ provider.name }}
+                </p>
+
+                <p>
+                    <strong>Provider Type:</strong>
+                    {{ provider.provider_type }}
+                </p>
+
+                <p>
+                    <strong>NPI Number:</strong>
+                    {{ provider.npi }}
+                </p>
+
+                <p>
+                    <strong>Specialty:</strong>
+                    {{ provider.specialty }}
+                </p>
+
+                <p>
+                    <strong>Phone Number:</strong>
+                    {{ provider.phone }}
+                </p>
+
+                <p>
+                    <strong>Address:</strong>
+                    {{ provider.address }}
+                </p>
+
+                <p>
+                    <strong>City:</strong>
+                    {{ provider.city }}
+                </p>
+
+                <p>
+                    <strong>State:</strong>
+                    {{ provider.state }}
+                </p>
+
+                <details class="complete-details">
+
+                    <summary>
+                        Complete Provider Information
+                    </summary>
+
+                    <div
+                        class="provider-details"
+                        id="details-{{ forloop.counter }}"
+                    ></div>
+
+                </details>
+
+                {{ provider.raw_data|json_script:forloop.counter }}
+
+            </div>
+
+        {% empty %}
+
+            <p class="empty-message">
+                No providers found.
+            </p>
+
         {% endfor %}
+
     {% endif %}
+
+    <script>
+        function formatLabel(key) {
+            return key
+                .replace(/_/g, " ")
+                .replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function renderData(data) {
+
+            if (data === null || data === undefined) {
+                return document.createTextNode("N/A");
+            }
+
+            if (Array.isArray(data)) {
+
+                const container = document.createElement("div");
+
+                if (data.length === 0) {
+                    container.textContent = "No information available";
+                    return container;
+                }
+
+                data.forEach((item, index) => {
+
+                    const section = document.createElement("div");
+                    section.className = "data-section";
+
+                    const heading = document.createElement("h4");
+                    heading.textContent = "Record " + (index + 1);
+
+                    section.appendChild(heading);
+                    section.appendChild(renderData(item));
+
+                    container.appendChild(section);
+                });
+
+                return container;
+            }
+
+            if (typeof data === "object") {
+
+                const entries = Object.entries(data);
+
+                if (entries.length === 0) {
+                    return document.createTextNode(
+                        "No information available"
+                    );
+                }
+
+                const table = document.createElement("table");
+                table.className = "info-table";
+
+                entries.forEach(([key, value]) => {
+
+                    const row = document.createElement("tr");
+
+                    const labelCell = document.createElement("th");
+                    labelCell.textContent = formatLabel(key);
+
+                    const valueCell = document.createElement("td");
+                    valueCell.appendChild(renderData(value));
+
+                    row.appendChild(labelCell);
+                    row.appendChild(valueCell);
+
+                    table.appendChild(row);
+                });
+
+                return table;
+            }
+
+            return document.createTextNode(String(data));
+        }
+
+        document.querySelectorAll(
+            ".complete-details"
+        ).forEach(details => {
+
+            details.addEventListener("toggle", function () {
+
+                if (!details.open) {
+                    return;
+                }
+
+                const target = details.querySelector(
+                    ".provider-details"
+                );
+
+                if (target.dataset.rendered === "true") {
+                    return;
+                }
+
+                const number = target.id.replace("details-", "");
+
+                const dataElement = document.getElementById(
+                    number
+                );
+
+                if (!dataElement) {
+                    target.textContent = "Data unavailable";
+                    return;
+                }
+
+                try {
+                    const data = JSON.parse(
+                        dataElement.textContent
+                    );
+
+                    target.appendChild(renderData(data));
+                    target.dataset.rendered = "true";
+
+                } catch (error) {
+                    target.textContent =
+                        "Unable to display provider information.";
+
+                    console.error(error);
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
+
